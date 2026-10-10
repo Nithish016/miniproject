@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>PRAGYA AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1030;--p1:#141a4d;--p2:#2a1b5e;--cy:#38e8ff;--vi:#a35bff;--mg:#ff4fd8;--gold:#ffc83d;--grn:#4cff7a;--red:#ff4d6d;--tx:#e8ecff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,sans-serif;min-height:100vh;overflow-x:hidden;image-rendering:pixelated}
+.px{font-family:'Press Start 2P','Courier New',monospace;line-height:1.5}
+.stars{position:fixed;inset:0;z-index:0;background:radial-gradient(#fff 1px,transparent 1.5px) 0 0/90px 90px,radial-gradient(#9cf 1px,transparent 1.5px) 40px 55px/130px 130px;opacity:.35;animation:tw 4s infinite alternate}
+@keyframes tw{to{opacity:.12}}
+nav{position:sticky;top:0;z-index:20;display:flex;gap:6px;align-items:center;padding:8px 10px;background:#070a22ee;border-bottom:4px solid var(--vi);overflow-x:auto}
+nav b{color:var(--cy);font-size:11px;margin-right:8px;white-space:nowrap}
+.btn{font-family:'Press Start 2P',monospace;font-size:10px;color:#fff;background:var(--p2);border:0;padding:10px 12px;cursor:pointer;box-shadow:0 0 0 3px #000,inset -4px -4px 0 #0006,inset 4px 4px 0 #fff3;white-space:nowrap;transition:transform .1s}
+.btn:hover{transform:translateY(-2px);background:#4b2aa0}.btn:active{transform:translateY(2px)}
+.btn.on{background:var(--cy);color:#001}.btn.gold{background:var(--gold);color:#2a1800;box-shadow:0 0 0 3px #000,inset -4px -4px 0 #c08a00,inset 4px 4px 0 #fff8,0 0 18px #ffc83d88}
+.btn.ghost{background:var(--p1);color:var(--cy)}
+.scr{display:none;position:relative;z-index:1;min-height:calc(100vh - 56px);animation:in .4s}.scr.on{display:block}
+@keyframes in{from{opacity:0;transform:scale(1.03)}}
+.panel{background:linear-gradient(var(--p1),#0e1238);box-shadow:0 0 0 4px #000,0 0 0 8px var(--vi),0 0 24px #a35bff66;padding:16px;margin:12px}
+.hud{display:flex;gap:10px;flex-wrap:wrap;font-family:'Press Start 2P';font-size:10px;padding:8px 12px;background:#050720d9;border-bottom:3px solid var(--cy)}
+.hud span{white-space:nowrap}
+.bar{height:12px;background:#000;box-shadow:0 0 0 2px var(--cy);width:120px;display:inline-block;vertical-align:middle}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cy),var(--vi));transition:width .6s}
+/* hero */
+.hero{height:calc(100vh - 56px);min-height:520px;position:relative;overflow:hidden;background:linear-gradient(#1a1250,#3a2a8c 45%,#ff7ac8 80%,#ffb36b)}
+.mt{position:absolute;bottom:90px;width:0;height:0;border-left:200px solid transparent;border-right:200px solid transparent;border-bottom:260px solid #2a2275}
+.mt.b{border-bottom-color:#1c1856;border-bottom-width:200px}
+.cloud{position:absolute;width:120px;height:28px;background:#fff;box-shadow:24px -16px 0 #fff,56px -10px 0 #fff,-16px 8px 0 #dde;opacity:.8;animation:cl 40s linear infinite}
+@keyframes cl{from{left:-200px}to{left:110%}}
+.island{position:absolute;animation:fl 4s ease-in-out infinite alternate}
+.island:before{content:"";display:block;width:100%;height:14px;background:#3fbf4a;box-shadow:inset 0 4px #7bff6a}
+.island:after{content:"";display:block;margin:0 10%;height:34px;background:#7a4a2a;clip-path:polygon(0 0,100% 0,70% 100%,30% 100%)}
+@keyframes fl{to{transform:translateY(-14px)}}
+.ground{position:absolute;bottom:0;left:0;right:0;height:90px;background:linear-gradient(#3fbf4a 0 14px,#7a4a2a 14px);box-shadow:inset 0 5px #7bff6a}
+.copy{position:absolute;left:5%;top:12%;max-width:560px;z-index:3}
+.copy h1{font-family:'Press Start 2P';font-size:clamp(28px,6vw,60px);margin:0;color:var(--gold);text-shadow:4px 4px 0 #000,0 0 24px #ffc83d88}
+.copy p{font-size:18px;text-shadow:2px 2px #000}
+.hero canvas.sp,.sp{position:absolute;image-rendering:pixelated}
+.portal{position:absolute;right:14%;bottom:90px;width:52px;height:88px;border-radius:26px;background:radial-gradient(var(--cy),var(--vi) 70%);box-shadow:0 0 0 4px #000,0 0 30px var(--cy);animation:pp 2s infinite alternate}
+@keyframes pp{to{box-shadow:0 0 0 4px #000,0 0 60px var(--mg);filter:hue-rotate(60deg)}}
+/* map */
+.map{position:relative;height:620px;margin:10px auto;max-width:980px;background:radial-gradient(#2fa9ff55,transparent 70%),linear-gradient(#0e3d7c,#0a2352);box-shadow:0 0 0 4px #000,0 0 0 8px var(--cy);overflow:hidden}
+.world{position:absolute;width:190px;text-align:center;cursor:pointer;animation:fl 3.5s ease-in-out infinite alternate;transition:filter .2s}
+.world:hover{filter:brightness(1.3) drop-shadow(0 0 12px var(--gold));z-index:5}
+.world .ic{font-size:64px;display:block;filter:drop-shadow(4px 4px 0 #0008)}
+.world .pl{height:26px;background:linear-gradient(#5ee06a 0 8px,#7a4a2a 8px);box-shadow:0 0 0 3px #000;margin:0 10px}
+.world .lb{font-family:'Press Start 2P';font-size:8px;background:#0a0d33;border:3px solid var(--cy);padding:6px;margin-top:6px;display:inline-block}
+.world.lock{filter:grayscale(1) brightness(.6)}
+.riv{position:absolute;left:0;right:0;top:300px;height:34px;background:repeating-linear-gradient(90deg,#27b7ff 0 20px,#6ad8ff 20px 40px);opacity:.35;animation:rv 3s linear infinite}
+@keyframes rv{to{background-position:40px 0}}
+/* game */
+.gwrap{max-width:900px;margin:0 auto;position:relative}
+canvas#g{width:100%;display:block;background:#6ec6ff;box-shadow:0 0 0 4px #000,0 0 0 8px var(--vi);image-rendering:pixelated}
+.codebox{position:absolute;left:12px;top:12px;background:#07102ee6;border:3px solid var(--cy);padding:8px 12px;font-family:VT323;font-size:22px;color:var(--grn)}
+.say{position:absolute;left:12px;bottom:12px;display:flex;gap:10px;align-items:flex-end;max-width:70%}
+.bub{background:#fff;color:#111;padding:10px 14px;font-size:14px;box-shadow:0 0 0 3px #000;position:relative}
+.pad{display:flex;gap:10px;justify-content:center;margin:14px 0;flex-wrap:wrap}
+.pad .btn{font-size:14px;padding:16px 20px;min-width:64px}
+.nm{font-family:'Press Start 2P';font-size:8px;background:var(--vi);padding:3px 5px;display:inline-block}
+/* cards */
+.cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.card{width:150px;padding:8px;background:linear-gradient(#1a2270,#2a1b5e);box-shadow:0 0 0 4px #000,0 0 0 7px var(--c,#aaa),0 0 18px var(--c);text-align:center;cursor:pointer;transition:transform .2s}
+.card:hover{transform:translateY(-10px) rotate(-2deg)}
+.card .en{position:absolute;margin:-18px 0 0 -18px;width:28px;height:28px;background:var(--cy);color:#001;font-family:'Press Start 2P';font-size:11px;line-height:28px;box-shadow:0 0 0 3px #000}
+.card .art{font-size:50px;background:#0a0d33;margin:6px 0;padding:10px}
+.card h4{font-family:'Press Start 2P';font-size:10px;margin:4px}.card small{font-size:12px;opacity:.85}
+.stat{font-family:'Press Start 2P';font-size:8px;margin-top:6px}
+/* vault */
+.vg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.obj{background:#1b1050;padding:18px;text-align:center;cursor:pointer;box-shadow:0 0 0 3px #000,0 0 0 6px var(--gold),0 0 20px #ffc83d55;animation:fl 3s infinite alternate}
+.obj:nth-child(even){animation-delay:.8s}.obj div{font-size:44px}.obj h4{font-family:'Press Start 2P';font-size:9px}
+input,select,textarea{width:100%;background:#050720;color:#fff;border:3px solid var(--cy);padding:9px;font-family:VT323;font-size:20px;margin:4px 0 10px}
+label{font-family:'Press Start 2P';font-size:8px;color:var(--cy)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.drop{border:4px dashed var(--vi);padding:30px;text-align:center;font-family:'Press Start 2P';font-size:10px;margin-bottom:12px}
+.ach{display:flex;gap:12px;align-items:center;padding:10px;background:#0a0d33;margin:8px 0;box-shadow:0 0 0 3px var(--vi)}.ach.lk{opacity:.4}
+.ach .bd{font-size:32px;width:52px;height:52px;display:grid;place-items:center;background:#1b1050;box-shadow:0 0 0 3px var(--gold)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,200px);background:var(--gold);color:#000;font-family:'Press Start 2P';font-size:10px;padding:14px;z-index:99;box-shadow:0 0 0 3px #000;transition:transform .4s}#toast.s{transform:translate(-50%,0)}
+@media(max-width:700px){.map{height:760px}.world{width:140px}.grid2{grid-template-columns:1fr}.say{max-width:95%}.copy{top:6%}}
+#auth{position:fixed;inset:0;z-index:100;background:linear-gradient(#0b1030,#2a1b5e);display:none;place-items:center;padding:16px}#auth.on{display:grid}
+#auth .panel{max-width:420px;width:100%}.err{color:var(--red);font-family:VT323;font-size:20px;min-height:22px}
+.node{width:90px;height:60px;font-size:14px}.rt{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:16px 0}
+.door{display:flex;justify-content:space-between;align-items:center;margin:10px 0}.door.lk{opacity:.45}
+.res{display:flex;gap:10px;align-items:center;padding:10px;background:#0a0d33;margin:8px 0;box-shadow:0 0 0 3px var(--vi);flex-wrap:wrap}.res .btn{font-size:8px;padding:8px}
+body.crt::after{content:"";position:fixed;inset:0;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.25) 50%),linear-gradient(90deg,rgba(255,0,0,.05),rgba(0,255,0,.02),rgba(0,0,255,.05));background-size:100% 3px,6px 100%;pointer-events:none;z-index:99999}
+.modal{position:fixed;inset:0;z-index:90;background:#05071bcc;display:none;place-items:center;padding:14px;overflow-y:auto}
+.modal.on{display:grid}
+.modal .panel{max-width:680px;width:100%;max-height:90vh;overflow-y:auto}
+.log-box{background:#040718;border:3px solid var(--cy);padding:12px;font-family:VT323;font-size:20px;max-height:260px;overflow-y:auto;line-height:1.4;margin:12px 0}
+.hp-bar{height:16px;background:#111;box-shadow:0 0 0 2px var(--gold);width:100%;margin:6px 0;position:relative}
+.hp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--grn),var(--gold));transition:width .4s}
+.q-opt{display:block;width:100%;text-align:left;margin:8px 0;padding:10px 14px;background:#0d123d;border:2px solid var(--vi);color:#fff;font-family:VT323;font-size:22px;cursor:pointer;transition:all .15s}
+.q-opt:hover,.q-opt.sel{background:var(--vi);border-color:var(--cy);transform:translateX(6px)}
+</style></head><body>
+<div class="stars"></div>
+<nav class="px"><b>◆ PRAGYA AI</b>
+<button class="btn on" data-s="title">TITLE</button><button class="btn ghost" id="out">LOGOUT</button><button class="btn" data-s="worlds">WORLDS</button><button class="btn" data-s="home" data-role="student">HOME</button><button class="btn" data-s="play" data-role="student">PLAY</button><button class="btn" data-s="mentor" data-role="student">MENTOR</button><button class="btn" data-s="vault">VAULT</button><button class="btn" data-s="cards" data-role="student">CARDS</button><button class="btn" data-s="hall" data-role="student">HALL</button><button class="btn" data-s="studio" data-role="faculty">STUDIO</button>
+<button class="btn ghost" id="sndTog" style="margin-left:auto">🔊 SFX: ON</button>
+<button class="btn ghost" id="crtTog">📺 CRT: OFF</button>
+</nav>
+
+<section class="scr on" id="title"><div class="hero">
+<div class="mt" style="left:-5%"></div><div class="mt b" style="left:30%"></div><div class="mt" style="left:62%"></div>
+<div class="cloud" style="top:14%"></div><div class="cloud" style="top:30%;animation-delay:-18s"></div>
+<div class="island" style="left:48%;top:30%;width:130px"></div><div class="island" style="left:68%;top:22%;width:100px;animation-delay:-2s"></div><div class="island" style="left:80%;top:48%;width:150px;animation-delay:-1s"></div>
+<div class="portal"></div><div class="ground"></div>
+<img class="sp" id="heroP" style="left:42%;bottom:90px;width:96px;animation:fl 1s infinite alternate">
+<div class="copy"><div class="px" style="color:var(--cy);font-size:11px">PLAY • LEARN • GROW</div><h1>LEARN BY PLAYING.</h1><p>Turn Computer Science concepts into adventures, challenges and playable worlds.</p><button class="btn gold" data-s="worlds">ENTER THE WORLD</button> <button class="btn ghost" data-s="worlds">EXPLORE WORLDS</button></div>
+</div></section>
+
+<section class="scr" id="worlds"><h2 class="px" style="text-align:center;color:var(--gold);text-shadow:3px 3px #000">CHOOSE YOUR WORLD</h2>
+<div class="map"><div class="riv"></div>
+<div class="world" style="left:6%;top:30px" data-w="py"><span class="ic">🏰</span><div class="pl"></div><span class="lb">PYTHON KINGDOM</span></div>
+<div class="world" style="left:38%;top:60px;animation-delay:-1s" data-w="nf"><span class="ic">🌲📡</span><div class="pl"></div><span class="lb">NETWORK FOREST</span></div>
+<div class="world" style="left:68%;top:30px;animation-delay:-2s" data-w="ds"><span class="ic">🏙️</span><div class="pl"></div><span class="lb">DATA STRUCTURE CITY</span></div>
+<div class="world" style="left:6%;top:380px;animation-delay:-.5s" data-w="al"><span class="ic">⚔️</span><div class="pl"></div><span class="lb">ALGORITHM ARENA</span></div>
+<div class="world" style="left:38%;top:400px;animation-delay:-1.5s" data-w="db"><span class="ic">🗝️</span><div class="pl"></div><span class="lb">DATABASE DUNGEON</span></div>
+<div class="world" style="left:68%;top:380px;animation-delay:-2.5s" data-w="os"><span class="ic">🗼</span><div class="pl"></div><span class="lb">OS CITY</span></div>
+</div><p style="text-align:center" class="px"><small style="font-size:8px">Python Kingdom is playable in this prototype</small></p></section>
+
+<section class="scr" id="home"><div class="hud"><span>❤️ <span class="lf">3</span></span><span>⭐ <span class="xp">0</span> XP</span><span>🪙 <span class="co">0</span></span><span>🔥 <span class="st">0</span></span><span>LVL <span class="lv">1</span></span></div>
+<div class="panel"><h2 class="px" style="color:var(--gold)">HOME BASE</h2><p>Your adventure continues…</p>
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><img class="spP" style="width:96px;animation:fl 1s infinite alternate"><div class="panel" style="flex:1;min-width:230px"><div class="px" style="font-size:9px;color:var(--cy)">CURRENT MISSION</div><p>⭐ Complete Loop Challenges in Python Kingdom</p><button class="btn gold" data-s="play">GO</button></div></div>
+<p class="px" style="font-size:9px">XP TO NEXT LEVEL <span class="bar"><i id="xpb" style="width:0"></i></span></p>
+<p class="px" style="font-size:9px;color:var(--cy)">UNLOCKED WORLDS</p><div style="font-size:34px" id="uw"></div>
+<div class="pad"><button class="btn gold" data-s="play">CONTINUE ADVENTURE</button><button class="btn" data-s="worlds">EXPLORE WORLDS</button><button class="btn" data-s="mentor" data-role="student">AI MENTOR</button><button class="btn" data-s="vault">KNOWLEDGE VAULT</button></div></div></section>
+
+<section class="scr" id="play"><div class="hud"><span>PYTHON KINGDOM — LEVEL 3: LOOPS</span><span id="hh">❤️❤️❤️</span><span>⭐ <span class="xp">0</span></span><span>🪙 <span class="co">0</span></span><span>🔥 <span class="st">0</span></span></div>
+<div class="gwrap"><canvas id="g" width="640" height="320"></canvas>
+<div class="codebox" id="code"></div>
+<div class="say"><img class="spA" style="width:56px"><div><span class="nm">PRAGYA</span><div class="bub" id="say">Walk to the console and press E to set the loop count!</div></div></div></div>
+<div class="pad"><button class="btn" id="bL">◀</button><button class="btn" id="bR">▶</button><button class="btn gold" id="bJ">JUMP</button><button class="btn" id="bE">E</button></div>
+<p style="text-align:center;font-size:14px;opacity:.8">Keyboard: ← → move · Space jump · E use console</p></section>
+
+<section class="scr" id="mentor"><div class="panel"><h2 class="px" style="color:var(--cy)">PRAGYA CHAMBER</h2>
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end"><img class="spA" style="width:150px;animation:fl 1.6s infinite alternate"><div style="flex:1;min-width:240px"><div class="bub" id="mb" style="font-size:17px">Think about what happens when the condition becomes FALSE.</div></div></div>
+<p class="px" style="font-size:9px;color:var(--gold)">ASK PRAGYA</p><div style="display:flex;gap:8px"><input id="mq" placeholder="Ask Pragya anything..."><button class="btn gold" id="mqb" style="height:44px">SEND</button></div><div class="pad" style="justify-content:flex-start">
+<button class="btn ghost" data-a="explain">EXPLAIN</button>
+<button class="btn ghost" data-a="hint">GIVE ME A HINT</button>
+<button class="btn ghost" data-a="wrong">WHY AM I WRONG?</button>
+<button class="btn ghost" data-a="practice">PRACTICE THIS</button>
+<button class="btn ghost" data-a="exam">HELP ME PREPARE FOR EXAMS</button></div></div></section>
+
+<section class="scr" id="vault"><div class="panel"><h2 class="px" style="color:var(--gold)">📚 KNOWLEDGE VAULT</h2><p>Explore. Learn. Grow.</p>
+<div style="display:flex;gap:8px;margin-bottom:14px"><input id="vq" placeholder="🔍 Search resources, courses, topics, tags..." style="margin:0"><button class="btn gold" id="vqb" style="height:44px">SEARCH</button></div>
+<div id="vl"></div>
+<div class="vg"><div class="obj" data-t="Video lectures" data-k="video"><div>▶️</div><h4>WATCH</h4></div><div class="obj" data-t="PPTs / PDFs / E-books" data-k="lecture,ppt,ebook"><div>📖</div><h4>READ</h4></div><div class="obj" data-t="Question bank" data-k="qbank"><div>✅</div><h4>PRACTICE</h4></div><div class="obj" data-t="Previous papers" data-k="paper"><div>📜</div><h4>REVISE</h4></div><div class="obj" data-t="Study notes" data-k="notes"><div>📝</div><h4>NOTES</h4></div></div></div></section>
+
+<section class="scr" id="cards"><div class="panel"><h2 class="px" style="color:var(--vi)">BATTLE CARDS</h2>
+<p class="px" style="font-size:9px;color:var(--cy);margin-bottom:12px">CLICK CARDS TO EQUIP/UNEQUIP (MAX 5 IN ACTIVE COMBAT DECK)</p>
+<div class="cards" id="deck"></div>
+<p class="px" style="font-size:10px;margin-top:16px">EQUIPPED: <span id="deckCount" style="color:var(--gold)">0/5</span> &nbsp; <button class="btn gold" id="battle">BATTLE IN ARENA</button></p></div></section>
+
+<section class="scr" id="hall"><div class="panel"><h2 class="px" style="color:var(--gold)">HALL OF MASTERS</h2>
+<div id="lb"></div><h3 class="px" style="font-size:11px;color:var(--cy)">ACHIEVEMENTS</h3><div id="achs"></div></div></section>
+
+<section class="scr" id="studio"><div class="panel"><h2 class="px" style="color:var(--gold)">FACULTY RESOURCE STUDIO</h2><p>Build the knowledge behind every adventure.</p>
+<div class="pad" style="justify-content:flex-start" id="ut"></div>
+<div class="grid2"><div class="drop">DROP <span id="utl">LECTURE PDF</span> HERE<br><br><input type="file" id="sf" accept=".pdf,.ppt,.pptx,.doc,.docx,.epub,.mp4,.webm,.txt,.md"></div>
+<div><label>COURSE</label><input id="sc" placeholder="Python Programming"><label>UNIT</label><input id="su" placeholder="Unit 3"><label>TOPIC</label><input id="stp" placeholder="Loops"><label>TITLE</label><input id="stt" placeholder="Resource title"><label>DESCRIPTION</label><input id="sd"><label>DIFFICULTY</label><select id="sdf"><option>Easy</option><option>Medium</option><option>Hard</option></select><label>TAGS</label><input id="stg" placeholder="loops, for, range"></div></div>
+<div class="pad" style="justify-content:flex-start"><button class="btn ghost" id="sdr">SAVE DRAFT</button><button class="btn gold" id="spb">PUBLISH</button></div>
+<h3 class="px" style="font-size:11px;color:var(--cy)">MY RESOURCES</h3><div id="myr"></div></div></section>
+<div id="auth" class="on"><div class="panel"><h2 class="px" style="color:var(--gold);font-size:16px">PRAGYA AI</h2><p class="px" style="font-size:9px;color:var(--cy)" id="at">PLAYER LOGIN</p>
+<div id="nmw" style="display:none"><label>NAME</label><input id="an"></div><label>EMAIL</label><input id="ae" type="email"><label>PASSWORD</label><input id="ap" type="password">
+<div id="rw" style="display:none"><label>I AM A</label><select id="ar"><option value="student">Student</option><option value="faculty">Faculty</option></select></div>
+<div class="err" id="aerr"></div><button class="btn gold" id="ago">START</button> <button class="btn ghost" id="asw">NEW PLAYER?</button></div></div>
+<section class="scr" id="levels"><div class="panel"><h2 class="px" id="lwt" style="color:var(--gold)"></h2><div id="ll"></div><button class="btn ghost" data-s="worlds">◀ BACK TO MAP</button></div></section>
+<section class="scr" id="puzzle"><div class="panel"><h2 class="px" id="pzt" style="color:var(--gold)"></h2><p id="pzd" style="font-size:18px"></p><div class="rt" id="pzb"></div><div class="px" id="pzs" style="font-size:9px;color:var(--cy)"></div><button class="btn ghost" data-s="levels">◀ BACK</button></div></section>
+
+<div class="modal" id="battleModal">
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 class="px" style="color:var(--gold);margin:0;font-size:14px">⚔️ CS BATTLE ARENA</h2>
+      <button class="btn ghost" id="bClose">✕ CLOSE</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;text-align:center">
+      <div style="background:#0a0e38;padding:12px;border:2px solid var(--cy)">
+        <div class="px" style="font-size:9px;color:var(--cy)" id="bPlayerName">STUDENT</div>
+        <img class="spP" style="width:64px;margin:8px auto;display:block">
+        <div class="px" style="font-size:9px">HP: <span id="bPlayerHp">40</span></div>
+        <div class="hp-bar"><i id="bPlayerBar" style="width:100%"></i></div>
+      </div>
+      <div style="background:#0a0e38;padding:12px;border:2px solid var(--red)">
+        <div class="px" style="font-size:9px;color:var(--red)">BUG-MONSTER REX</div>
+        <div style="font-size:48px;margin:6px 0">👾</div>
+        <div class="px" style="font-size:9px">HP: <span id="bBossHp">45</span></div>
+        <div class="hp-bar"><i id="bBossBar" style="width:100%;background:linear-gradient(90deg,var(--red),var(--gold))"></i></div>
+      </div>
+    </div>
+    <div class="log-box" id="bLog">Simulating combat duel...</div>
+    <div id="bOutcome" style="text-align:center;margin:12px 0;font-family:'Press Start 2P';font-size:11px"></div>
+    <div style="text-align:center">
+      <button class="btn gold" id="bRematch">FIGHT AGAIN</button>
+      <button class="btn ghost" id="bDone">BACK TO DECK</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="quizModal">
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 class="px" style="color:var(--gold);margin:0;font-size:14px" id="qTitle">QUIZ CHALLENGE</h2>
+      <button class="btn ghost" id="qClose">✕ CLOSE</button>
+    </div>
+    <p id="qDesc" style="color:#aab;font-size:14px;margin:6px 0 14px"></p>
+    <div id="qBody"></div>
+    <div id="qResult" style="display:none;margin-top:14px"></div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let actx=null,sndOn=localStorage.snd!=='0';
+function snd(t){
+  if(!sndOn)return;
+  try{
+    if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+    const now=actx.currentTime;
+    const osc=actx.createOscillator(),g=actx.createGain();
+    osc.connect(g);g.connect(actx.destination);
+    if(t==='jump'){
+      osc.type='square';osc.frequency.setValueAtTime(150,now);osc.frequency.exponentialRampToValueAtTime(600,now+.14);
+      g.gain.setValueAtTime(.12,now);g.gain.linearRampToValueAtTime(.01,now+.14);
+      osc.start(now);osc.stop(now+.14);
+    }else if(t==='coin'){
+      osc.type='square';osc.frequency.setValueAtTime(987.77,now);osc.frequency.setValueAtTime(1318.51,now+.08);
+      g.gain.setValueAtTime(.14,now);g.gain.linearRampToValueAtTime(.01,now+.24);
+      osc.start(now);osc.stop(now+.24);
+    }else if(t==='click'){
+      osc.type='triangle';osc.frequency.setValueAtTime(800,now);
+      g.gain.setValueAtTime(.08,now);g.gain.linearRampToValueAtTime(.01,now+.04);
+      osc.start(now);osc.stop(now+.04);
+    }else if(t==='hit'){
+      osc.type='sawtooth';osc.frequency.setValueAtTime(200,now);osc.frequency.linearRampToValueAtTime(40,now+.2);
+      g.gain.setValueAtTime(.18,now);g.gain.linearRampToValueAtTime(.01,now+.2);
+      osc.start(now);osc.stop(now+.2);
+    }else if(t==='win'){
+      [523.25,659.25,783.99,1046.5].forEach((f,i)=>{
+        const o=actx.createOscillator(),gn=actx.createGain();
+        o.type='square';o.frequency.setValueAtTime(f,now+i*.09);
+        gn.gain.setValueAtTime(.12,now+i*.09);gn.gain.linearRampToValueAtTime(.01,now+i*.09+.2);
+        o.connect(gn);gn.connect(actx.destination);
+        o.start(now+i*.09);o.stop(now+i*.09+.2);
+      });
+    }else if(t==='card'){
+      osc.type='triangle';osc.frequency.setValueAtTime(420,now);osc.frequency.exponentialRampToValueAtTime(880,now+.1);
+      g.gain.setValueAtTime(.1,now);g.gain.linearRampToValueAtTime(.01,now+.1);
+      osc.start(now);osc.stop(now+.1);
+    }
+  }catch(e){}
+}
+const sndBtn=$('#sndTog'),crtBtn=$('#crtTog');
+if(sndBtn){
+  sndBtn.textContent=sndOn?'🔊 SFX: ON':'🔇 SFX: OFF';
+  sndBtn.onclick=()=>{sndOn=!sndOn;localStorage.snd=sndOn?'1':'0';sndBtn.textContent=sndOn?'🔊 SFX: ON':'🔇 SFX: OFF';snd('click')};
+}
+let crtOn=localStorage.crt==='1';
+function updateCrt(){document.body.classList.toggle('crt',crtOn);if(crtBtn)crtBtn.textContent=crtOn?'📺 CRT: ON':'📺 CRT: OFF'}
+if(crtBtn){crtBtn.onclick=()=>{crtOn=!crtOn;localStorage.crt=crtOn?'1':'0';updateCrt();snd('click')};updateCrt()}
+
+function spr(rows,pal,sc){const c=document.createElement('canvas');c.width=rows[0].length;c.height=rows.length;const x=c.getContext('2d');rows.forEach((r,y)=>[...r].forEach((ch,i)=>{if(pal[ch]){x.fillStyle=pal[ch];x.fillRect(i,y,1,1)}}));return c}
+const PL=spr(["..kkkk..",".kbbbbk.","kbbbbbbk","kbsssskb","ksesesks",".ksssssk","..kttk..",".kttttk.","kstttts.","k.tttt.k","..kkkk..","..kk.kk."].map(r=>r),{k:'#111',b:'#2a4bd8',s:'#ffcf9e',e:'#111',t:'#e8402a'});
+const PR=spr(["..kkkkkk..",".kvvvvvvk.","kvvvvvvvvk","kvsssssvvk","kvsesesvvk","kvvsssvvvk",".kvvttvvk.","..kttttk..","..ktcctk..","..kkkkkk.."],{k:'#111',v:'#b46bff',s:'#ffd7b5',e:'#111',t:'#2fd0c8',c:'#ffc83d'});
+const pu=PL.toDataURL(),au=PR.toDataURL();
+$('#heroP').src=pu;$$('.spP').forEach(i=>i.src=pu);$$('.spA').forEach(i=>i.src=au);
+function show(id){if(!localStorage.tk&&id!='title')id='title';$$('.scr').forEach(s=>s.classList.toggle('on',s.id==id));$$('nav .btn').forEach(b=>b.classList.toggle('on',b.dataset.s==id));scrollTo(0,0);if(id=='play')reset();window.onShow&&onShow(id)}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(b)snd('click');
+  const t=e.target.closest('[data-s]');if(t)show(t.dataset.s);
+  const w=e.target.closest('.world');if(w){window.enterWorld(w.dataset.w)}
+  const m=e.target.closest('[data-a]');if(m)window.ask(m.dataset.a);
+  const o=e.target.closest('.obj');if(o)window.openVault(o.dataset.k,o.dataset.t);
+});
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('s');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('s'),1800)}
+
+// game
+const cv=$('#g'),cx=cv.getContext('2d'),G=260;let N=2,p,k={},coins,hearts,won,cloud=0;
+function reset(){p={x:30,y:G-24,vx:0,vy:0,g:1};hearts=hearts>0?hearts:3;coins=[[100,200],[260,200],[330,190],[560,230]];won=false;draw_code();hud()}
+function hud(){$('#hh').textContent='❤️'.repeat(hearts)}
+function draw_code(){$('#code').innerHTML=`for i in range(<b style="color:#ffc83d">${N}</b>):<br>&nbsp;&nbsp;activate()`}
+function say(t){$('#say').textContent=t}
+function nearC(){return Math.abs(p.x-110)<40}
+function act(){if(nearC()){N=N%7+1;draw_code();say(N<5?`Loop activated ${N} platforms. The gap needs 5!`:N==5?'Great! The loop activated 5 platforms. Keep going!':`${N} platforms... more than needed, but it works!`)}}
+addEventListener('keydown',e=>{k[e.key]=1;if(e.key==' '||e.key=='ArrowUp'){if(p.g){p.vy=-11;p.g=0;snd('jump')}e.preventDefault()}if(e.key.toLowerCase()=='e')act()});addEventListener('keyup',e=>k[e.key]=0);
+[['bL','ArrowLeft'],['bR','ArrowRight']].forEach(([i,key])=>{const b=$('#'+i);['pointerdown','pointerup','pointerleave'].forEach(ev=>b.addEventListener(ev,e=>{k[key]=ev=='pointerdown'?1:0}))});
+$('#bJ').onclick=()=>{if(p.g){p.vy=-11;p.g=0;snd('jump')}};$('#bE').onclick=act;
+function solid(x){if(x<200||x>520)return true;const i=Math.floor((x-200)/64);return i<N&&(x-200)%64<46}
+function rect(c,x,y,w,h){cx.fillStyle=c;cx.fillRect(x,y,w,h)}
+function loop(){if($('#play').classList.contains('on')&&p){
+p.vx=(k.ArrowRight?3:0)-(k.ArrowLeft?3:0);p.x=Math.max(0,p.x+p.vx);p.vy+=.6;p.y+=p.vy;p.g=0;
+const fx=p.x+8;if(p.y>=G-24&&p.vy>=0&&solid(fx)){p.y=G-24;p.vy=0;p.g=1}
+if(p.y>340){hearts--;say(hearts?'Oops! You fell. Increase the loop count!':'Out of lives — try again!');snd('hit');if(hearts<=0)hearts=3;reset()}
+coins=coins.filter(c=>{if(Math.abs(c[0]-p.x-8)<14&&Math.abs(c[1]-p.y-10)<20){$$('.co').forEach(e=>e.textContent=+e.textContent+10);snd('coin');return false}return true});
+if(p.x>600&&!won){won=true;window.onWin&&onWin(N)}
+cloud=(cloud+.3)%760;
+const g=cx.createLinearGradient(0,0,0,320);g.addColorStop(0,'#4aa8ff');g.addColorStop(1,'#bfe8ff');cx.fillStyle=g;cx.fillRect(0,0,640,320);
+cx.fillStyle='#6b5bd0';cx.beginPath();cx.moveTo(0,260);cx.lineTo(120,120);cx.lineTo(240,260);cx.moveTo(200,260);cx.lineTo(360,90);cx.lineTo(520,260);cx.fill();
+rect('#fff',cloud-100,40,70,14);rect('#fff',cloud-86,30,40,14);rect('#fff',(cloud+300)%760-100,70,60,12);
+rect('#7a4a2a',0,G,200,60);rect('#3fbf4a',0,G,200,8);rect('#7a4a2a',520,G,120,60);rect('#3fbf4a',520,G,120,8);
+rect('#0a1a3a',200,G+20,320,60);
+for(let i=0;i<N&&i<7;i++){const x=200+i*64;rect('#ffc83d',x,G,46,10);rect('#7a4a2a',x,G+10,46,8)}
+rect('#555',100,G-34,20,34);rect('#38e8ff',104,G-30,12,10);
+rect('#fff',610,G-60,4,60);rect('#ff4d6d',614,G-60,20,14);
+coins.forEach(c=>{rect('#000',c[0]-6,c[1]-6,12,12);rect('#ffc83d',c[0]-4,c[1]-4,8,8)});
+cx.imageSmoothingEnabled=false;cx.drawImage(PL,p.x,p.y,24,24)}
+requestAnimationFrame(loop)}
+hearts=3;reset();loop();
+
+const API=async(m,p,b,form)=>{const r=await fetch('/api'+p,{method:m,headers:{...(localStorage.tk&&{authorization:'Bearer '+localStorage.tk}),...(b&&!form&&{'content-type':'application/json'})},body:form?b:b?JSON.stringify(b):undefined});const d=await r.json().catch(()=>({}));if(r.status==401&&localStorage.tk&&!p.startsWith('/auth'))logout();if(!r.ok)throw new Error(d.error||'Error');return d};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let U=null,W=[],curLevel=null,reg=false;
+function setUser(u){U=u;$$('.xp').forEach(e=>e.textContent=u.xp);$$('.co').forEach(e=>e.textContent=u.coins);$$('.lv').forEach(e=>e.textContent=u.level);$$('.st').forEach(e=>e.textContent=u.streak);$$('.lf').forEach(e=>e.textContent=u.lives);$('#xpb').style.width=(u.xp%150)/150*100+'%';hearts=u.lives||3;hud();$$('[data-role]').forEach(b=>b.style.display=b.dataset.role==u.role?'':'none')}
+async function loadWorlds(){W=await API('GET','/worlds');$$('.world').forEach(w=>{const x=W.find(a=>a.id==w.dataset.w);w.classList.toggle('lock',!(x&&x.unlocked))});$('#uw').innerHTML=W.map(w=>`<span style="${w.unlocked?'':'opacity:.3'}">${w.icon}</span>`).join(' ')}
+async function boot(u){setUser(u);$('#auth').classList.remove('on');if(u.role=='student')await loadWorlds();show(u.role=='faculty'?'studio':'home')}
+function logout(){delete localStorage.tk;$('#auth').classList.add('on');show('title')}
+$('#out').onclick=logout;
+$('#asw').onclick=()=>{reg=!reg;$('#nmw').style.display=$('#rw').style.display=reg?'':'none';$('#at').textContent=reg?'NEW PLAYER':'PLAYER LOGIN';$('#asw').textContent=reg?'HAVE AN ACCOUNT?':'NEW PLAYER?'};
+$('#ago').onclick=async()=>{try{const d=await API('POST',reg?'/auth/register':'/auth/login',{name:$('#an').value,email:$('#ae').value,password:$('#ap').value,role:$('#ar').value});localStorage.tk=d.token;$('#aerr').textContent='';boot(d.user)}catch(e){$('#aerr').textContent=e.message}};
+
+// worlds & levels
+window.enterWorld=id=>{if(!U||U.role!='student')return toast('STUDENTS ONLY');const w=W.find(a=>a.id==id);if(!w||!w.unlocked)return toast(`LOCKED — NEED ${w?w.unlocked_by:'?'} XP`);if(!w.levels.length)return toast('NO LEVELS YET');
+$('#lwt').textContent=w.icon+' '+w.name.toUpperCase();$('#ll').innerHTML=w.levels.map(l=>`<div class="panel door"><span class="px" style="font-size:10px">LEVEL ${l.num} — ${esc(l.title).toUpperCase()} ${l.done?'✅':''}</span><button class="btn gold" data-lv="${l.id}">${l.done?'REPLAY':'PLAY'}</button></div>`).join('');show('levels')};
+$('#ll').onclick=e=>{const b=e.target.closest('[data-lv]');if(!b)return;const l=W.flatMap(w=>w.levels).find(x=>x.id==b.dataset.lv);curLevel=l;l.kind=='loop'?show('play'):puzzle(l)};
+function after(d){setUser(d.user);(d.newAchievements||[]).forEach((a,i)=>setTimeout(()=>toast('🏆 '+a.name),1800*(i+1)));return loadWorlds()}
+window.onWin=async n=>{const lv=curLevel&&curLevel.kind=='loop'?curLevel:W.flatMap(w=>w.levels).find(l=>l.kind=='loop');if(!lv)return;try{const d=await API('POST',`/levels/${lv.id}/submit`,{count:n});if(d.correct){snd('win');toast(d.xpGained?`★ LEVEL COMPLETE! +${d.xpGained} XP  ${'⭐'.repeat(d.stars)}`:'LEVEL CLEARED AGAIN');say('Level complete! You used a loop to build the bridge.');await after(d)}else{snd('hit');setUser(d.user);say('Not quite — check the loop count!')}}catch(e){toast(e.message)}won=true}
+let path=[];
+function puzzle(l){const c={variable:['x = 42 — what is the TYPE of x?',['int','str','float','bool'],a=>({type:a})],condition:['Guard rule: if age >= 18: open(). Your age is 20. Does the door open?',['TRUE','FALSE'],a=>({value:a=='TRUE'})]}[l.kind];
+$('#pzt').textContent=`LEVEL ${l.num} — ${l.title.toUpperCase()}`;$('#pzs').textContent='';path=[];
+if(l.kind=='route'){$('#pzd').textContent='Send a packet from A to B. Routers R2 and R4 are online; R1 and R3 are down. Click nodes in order.';$('#pzb').innerHTML=['A','R1','R2','R3','R4','B'].map(n=>`<button class="btn node" data-n="${n}">${n.startsWith('R')?'📡 ':'💻 '}${n}</button>`).join('')+'<button class="btn gold" id="snd">SEND PACKET</button><button class="btn ghost" id="clr">RESET</button>';
+$('#pzb').onclick=e=>{const n=e.target.closest('[data-n]');if(n){path.push(n.dataset.n);$('#pzs').textContent='PATH: '+path.join(' → ')}if(e.target.id=='clr'){path=[];$('#pzs').textContent=''}if(e.target.id=='snd')sub(l,{path})}}
+else{$('#pzd').textContent=c[0];$('#pzb').innerHTML=c[1].map(o=>`<button class="btn gold" data-o="${o}">${o}</button>`).join('');$('#pzb').onclick=e=>{const o=e.target.closest('[data-o]');if(o)sub(l,c[2](o.dataset.o))}}
+show('puzzle')}
+async function sub(l,b){try{const d=await API('POST',`/levels/${l.id}/submit`,b);if(d.correct){snd('win');toast(d.xpGained?`★ +${d.xpGained} XP  ${'⭐'.repeat(d.stars)}`:'CLEARED AGAIN');await after(d);enterWorld(W.find(w=>w.levels.some(x=>x.id==l.id)).id)}else{snd('hit');setUser(d.user);$('#pzs').textContent='✖ WRONG — LOST A LIFE. TRY AGAIN';path=[]}}catch(e){toast(e.message)}}
+
+// mentor
+window.ask=async(a,q)=>{$('#mb').textContent='…';try{const d=await API('POST','/mentor',{action:a,question:q});$('#mb').textContent=d.reply}catch(e){$('#mb').textContent=e.message}};
+$('#mqb').onclick=()=>{const v=$('#mq').value.trim();if(v){ask('chat',v);$('#mq').value=''}};
+
+// vault
+const fopen=async id=>{try{const r=await fetch('/api/files/'+id,{headers:{authorization:'Bearer '+localStorage.tk}});if(!r.ok)throw 0;window.open(URL.createObjectURL(await r.blob()))}catch{toast('NO FILE ATTACHED')}};
+async function searchVault(q){
+  try{
+    const l=await API('GET','/vault?q='+encodeURIComponent(q||''));
+    $('#vl').innerHTML=`<h3 class="px" style="font-size:11px;color:var(--cy)">SEARCH RESULTS FOR "${esc(q)}"</h3>`+(l.length?l.map(r=>`<div class="res"><span class="tag">${esc(r.kind).toUpperCase()}</span><div style="flex:1"><b>${esc(r.title)}</b><br><small>${esc(r.course||'')} ${esc(r.topic||'')} · ${esc(r.author)} · ${esc(r.difficulty||'')}</small></div>${r.hasFile?`<button class="btn gold" data-f="${r.id}">OPEN</button>`:''}</div>`).join(''):'<p>No resources found matching your query.</p>');
+  }catch(e){toast(e.message)}
+}
+if($('#vqb'))$('#vqb').onclick=()=>{const q=$('#vq').value.trim();if(q)searchVault(q)};
+if($('#vq'))$('#vq').onkeydown=e=>{if(e.key==='Enter'){const q=$('#vq').value.trim();if(q)searchVault(q)}};
+
+window.openVault=async(k,t)=>{
+  try{
+    if(k==='qbank'){
+      const banks=await API('GET','/assessments');
+      $('#vl').innerHTML=`<h3 class="px" style="font-size:11px;color:var(--cy)">QUESTION BANKS & ASSESSMENTS</h3>`+(banks.length?banks.map(b=>`<div class="res"><span class="tag">QUIZ</span><div style="flex:1"><b>${esc(b.title)}</b><br><small>${esc(b.course_id||'')} · ${esc(b.unit||'')} · ${esc(b.topic||'')} (${b.questionCount} Questions)${b.passed?' · ⭐ PASSED ('+b.highestScore+' pts)':''}</small></div><button class="btn gold" data-quiz="${b.id}">${b.passed?'RETAKE':'START QUIZ'}</button></div>`).join(''):'<p>No question banks published yet.</p>');
+      return;
+    }
+    const l=await API('GET','/vault?kind='+k);
+    $('#vl').innerHTML=`<h3 class="px" style="font-size:11px;color:var(--cy)">${esc(t).toUpperCase()}</h3>`+(l.length?l.map(r=>`<div class="res"><span class="tag">${esc(r.kind).toUpperCase()}</span><div style="flex:1"><b>${esc(r.title)}</b><br><small>${esc(r.course||'')} ${esc(r.topic||'')} · ${esc(r.author)} · ${esc(r.difficulty||'')}</small></div>${r.hasFile?`<button class="btn gold" data-f="${r.id}">OPEN</button>`:''}</div>`).join(''):'<p>The shelves are empty — no resources published yet.</p>');
+  }catch(e){toast(e.message)}
+};
+$('#vl').onclick=e=>{const b=e.target.closest('[data-f]');if(b)fopen(b.dataset.f)};
+
+// quizzes
+let activeQuiz=null,userAnswers={};
+$('#vl').addEventListener('click',async e=>{const qb=e.target.closest('[data-quiz]');if(qb)startQuiz(qb.dataset.quiz)});
+async function startQuiz(id){
+  try{
+    activeQuiz=await API('GET','/assessments/'+id);
+    userAnswers={};
+    $('#qTitle').textContent=activeQuiz.bank.title.toUpperCase();
+    $('#qDesc').textContent=`${activeQuiz.bank.unit} · ${activeQuiz.bank.topic} — ${activeQuiz.bank.description||''}`;
+    renderQuizQuestions();
+    $('#qResult').style.display='none';
+    $('#quizModal').classList.add('on');
+    snd('click');
+  }catch(e){toast(e.message)}
+}
+function renderQuizQuestions(){
+  $('#qBody').innerHTML=activeQuiz.questions.map((q,idx)=>`
+    <div class="panel" style="margin:10px 0;background:#090d2e">
+      <div class="px" style="font-size:9px;color:var(--cy)">QUESTION ${idx+1} OF ${activeQuiz.questions.length} (${q.points} PTS)</div>
+      <p style="font-size:18px;margin:8px 0">${esc(q.prompt)}</p>
+      <div>${q.options.map(opt=>`<button class="q-opt ${userAnswers[q.id]===opt?'sel':''}" data-qid="${q.id}" data-opt="${esc(opt)}">${esc(opt)}</button>`).join('')}</div>
+    </div>
+  `).join('')+'<button class="btn gold" id="qSubmit" style="width:100%;margin-top:10px">SUBMIT ASSESSMENT</button>';
+}
+$('#qBody').addEventListener('click',async e=>{
+  const optBtn=e.target.closest('.q-opt');
+  if(optBtn){userAnswers[optBtn.dataset.qid]=optBtn.dataset.opt;snd('click');renderQuizQuestions();return}
+  if(e.target.id==='qSubmit'){
+    try{
+      const res=await API('POST',`/assessments/${activeQuiz.bank.id}/submit`,{answers:userAnswers});
+      if(res.passed)snd('win');else snd('hit');
+      $('#qResult').style.display='block';
+      $('#qResult').innerHTML=`
+        <div class="panel" style="text-align:center;background:${res.passed?'#083318':'#330818'};border:3px solid ${res.passed?'var(--grn)':'var(--red)'}">
+          <h3 class="px" style="color:${res.passed?'var(--gold)':'var(--red)'}">${res.passed?'★ ASSESSMENT PASSED! ★':'ASSESSMENT FAILED'}</h3>
+          <p class="px" style="font-size:11px">SCORE: ${res.score} / ${res.total} (${res.percentage}%)</p>
+          ${res.xpGained?`<p class="px" style="font-size:10px;color:var(--cy)">+${res.xpGained} XP  +${res.coinsGained} COINS</p>`:''}
+          <div style="text-align:left;margin-top:14px">
+            ${res.results.map(r=>`
+              <div style="margin:8px 0;padding:8px;background:#050720">
+                <b>${r.correct?'✅':'❌'} ${esc(r.prompt)}</b><br>
+                <small>Your answer: ${esc(r.yourAnswer||'None')}</small><br>
+                ${!r.correct?`<small style="color:var(--gold)">Correct: ${esc(r.correctAnswer)}</small><br>`:''}
+                <small style="opacity:.8">${esc(r.explanation||'')}</small>
+              </div>
+            `).join('')}
+          </div>
+          <button class="btn gold" id="qDone" style="margin-top:10px">CONTINUE</button>
+        </div>
+      `;
+      if(res.xpGained){const me=await API('GET','/me');setUser(me)}
+    }catch(err){toast(err.message)}
+  }
+});
+$('#qClose').onclick=()=>$('#quizModal').classList.remove('on');
+$('#qResult').addEventListener('click',e=>{if(e.target.id==='qDone')$('#quizModal').classList.remove('on')});
+
+// studio
+const KINDS=[['LECTURE PDF','lecture'],['PPT','ppt'],['NOTES','notes'],['E-BOOK','ebook'],['VIDEO','video'],['QUESTION BANK','qbank'],['PREVIOUS PAPER','paper']];let sk='lecture';
+KINDS.forEach(([t,k],i)=>{const b=document.createElement('button');b.className='btn '+(i?'ghost':'on');b.textContent=t;b.onclick=()=>{$$('#ut .btn').forEach(x=>x.className='btn ghost');b.className='btn on';$('#utl').textContent=t;sk=k};$('#ut').append(b)});
+async function save(status){const f=new FormData();f.append('kind',sk);[['course','sc'],['unit','su'],['topic','stp'],['title','stt'],['descr','sd'],['difficulty','sdf'],['tags','stg']].forEach(([k,i])=>f.append(k,$('#'+i).value));if($('#sf').files[0])f.append('file',$('#sf').files[0]);
+try{const r=await API('POST','/studio',f,true);if(status=='published')await API('POST',`/studio/${r.id}/status`,{status});toast(status=='published'?'PUBLISHED!':'SAVED AS DRAFT');['sc','su','stp','stt','sd','stg','sf'].forEach(i=>$('#'+i).value='');loadMine()}catch(e){toast(e.message)}}
+$('#sdr').onclick=()=>save('draft');$('#spb').onclick=()=>save('published');
+async function loadMine(){const l=await API('GET','/studio');$('#myr').innerHTML=l.length?l.map(r=>`<div class="res"><span class="tag">${r.status.toUpperCase()}</span><div style="flex:1"><b>${esc(r.title)}</b><br><small>${esc(r.kind)} · ${esc(r.course||'')}</small></div>${r.file?`<button class="btn ghost" data-f="${r.id}">PREVIEW</button>`:''}${r.status!='published'?`<button class="btn gold" data-st="${r.id}:published">PUBLISH</button>`:`<button class="btn ghost" data-st="${r.id}:draft">UNPUBLISH</button>`}<button class="btn ghost" data-st="${r.id}:archived">ARCHIVE</button><button class="btn ghost" data-del="${r.id}">DELETE</button></div>`).join(''):'<p>Nothing yet. Upload your first resource!</p>'}
+$('#myr').onclick=async e=>{const b=e.target.closest('button');if(!b)return;try{if(b.dataset.f)return fopen(b.dataset.f);if(b.dataset.st){const[i,s]=b.dataset.st.split(':');await API('POST',`/studio/${i}/status`,{status:s})}if(b.dataset.del&&confirm('Delete this resource?'))await API('DELETE','/studio/'+b.dataset.del);loadMine()}catch(x){toast(x.message)}};
+
+// cards & battles
+let allCards=[];
+async function loadCards(){
+  allCards=await API('GET','/cards');
+  const col={common:'#9aa',rare:'#3aa0ff',epic:'#b46bff',legendary:'#ffc83d'};
+  const equippedCount=allCards.filter(c=>c.in_deck).length;
+  if($('#deckCount'))$('#deckCount').textContent=`${equippedCount}/5`;
+  $('#deck').innerHTML=allCards.map(c=>`
+    <div class="card" data-cid="${c.id}" style="--c:${col[c.rarity]};${c.owned?'':'filter:grayscale(1) brightness(.5)'};${c.in_deck?'box-shadow:0 0 0 4px #000,0 0 0 7px var(--gold),0 0 24px var(--gold)':''}">
+      <div class="en">${c.energy}</div>
+      <div class="art">${c.owned?c.icon:'🔒'}</div>
+      <h4>${esc(c.name)}</h4>
+      <small>${c.rarity.toUpperCase()} · ${c.deck}</small>
+      <div class="stat">ATK ${c.atk} DEF ${c.def}</div>
+      <small>${esc(c.ability)}</small>
+      <div style="margin-top:6px">${c.owned?`<span class="tag" style="background:${c.in_deck?'var(--gold);color:#000':'var(--vi)'}">${c.in_deck?'EQUIPPED':'EQUIP'}</span>`:'<span class="tag" style="background:#555">LOCKED</span>'}</div>
+    </div>
+  `).join('');
+}
+$('#deck').onclick=async e=>{
+  const cardEl=e.target.closest('[data-cid]');
+  if(!cardEl)return;
+  const cid=+cardEl.dataset.cid;
+  const c=allCards.find(x=>x.id===cid);
+  if(!c||!c.owned)return toast('CARD LOCKED — INCREASE LEVEL');
+  let currentDeck=allCards.filter(x=>x.in_deck).map(x=>x.id);
+  if(c.in_deck){
+    currentDeck=currentDeck.filter(id=>id!==cid);
+  }else{
+    if(currentDeck.length>=5)return toast('DECK FULL (MAX 5 CARDS)');
+    currentDeck.push(cid);
+  }
+  try{
+    await API('PUT','/cards/deck',{cardIds:currentDeck});
+    snd('card');
+    toast(`DECK: ${currentDeck.length}/5 CARDS`);
+    await loadCards();
+  }catch(err){toast(err.message)}
+};
+$('#battle').onclick=async()=>{
+  if(!U||U.role!=='student')return toast('STUDENTS ONLY');
+  $('#battleModal').classList.add('on');
+  $('#bPlayerName').textContent=(U.name||'STUDENT').toUpperCase();
+  $('#bLog').innerHTML='⚔️ Commencing duel against Bug-Monster Rex...';
+  $('#bOutcome').textContent='';
+  const playerMax=30+(U.level||1)*5;
+  $('#bPlayerHp').textContent=playerMax;
+  $('#bPlayerBar').style.width='100%';
+  $('#bBossHp').textContent=45;
+  $('#bBossBar').style.width='100%';
+  snd('click');
+  try{
+    const sim=await API('POST','/battle/simulate');
+    let html='';
+    sim.combatLog.forEach(line=>{html+=`<div style="margin:4px 0">${esc(line)}</div>`});
+    $('#bLog').innerHTML=html;
+    $('#bLog').scrollTop=$('#bLog').scrollHeight;
+    const pHp=Math.max(0,sim.playerHpRemaining);
+    const bHp=Math.max(0,sim.bossHpRemaining);
+    $('#bPlayerHp').textContent=pHp;
+    $('#bPlayerBar').style.width=(pHp/playerMax*100)+'%';
+    $('#bBossHp').textContent=bHp;
+    $('#bBossBar').style.width=(bHp/45*100)+'%';
+    if(sim.victory){
+      snd('win');
+      $('#bOutcome').innerHTML=`<span style="color:var(--gold)">🏆 VICTORY! +${sim.xpGained} XP  +${sim.coinsGained} COINS</span>`;
+    }else{
+      snd('hit');
+      $('#bOutcome').innerHTML=`<span style="color:var(--red)">💀 DEFEAT! TRY ANOTHER CARD DECK</span>`;
+    }
+    setUser(sim.user);
+  }catch(e){$('#bLog').textContent=e.message}
+};
+$('#bClose').onclick=$('#bDone').onclick=()=>$('#battleModal').classList.remove('on');
+$('#bRematch').onclick=()=>$('#battle').click();
+
+window.onShow=async id=>{try{
+  if(id=='cards')await loadCards();
+  if(id=='hall'){const l=await API('GET','/leaderboard');$('#lb').innerHTML=l.map(r=>`<div class="ach" style="${r.you?'box-shadow:0 0 0 3px var(--gold)':''}"><div class="bd">${['🥇','🥈','🥉'][r.rank-1]||r.rank}</div><b>${esc(r.name)}${r.you?' (YOU)':''}</b><span style="margin-left:auto" class="px">${r.xp} XP</span></div>`).join('')||'<p>No players yet.</p>';
+  const a=await API('GET','/achievements');$('#achs').innerHTML=a.map(x=>`<div class="ach ${x.unlockedAt?'':'lk'}"><div class="bd">${x.unlockedAt?x.icon:'🔒'}</div><div><b>${esc(x.name)}</b><br>${esc(x.descr)}</div></div>`).join('')}
+  if(id=='studio')loadMine();if(id=='worlds'&&U&&U.role=='student')loadWorlds()}catch(e){}};
+if(localStorage.tk)API('GET','/me').then(boot).catch(()=>$('#auth').classList.add('on'));
+</script></body></html>

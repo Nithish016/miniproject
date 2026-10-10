@@ -1,0 +1,22 @@
+{
+  "name": "pragya",
+  "version": "1.0.0",
+  "description": "PRAGYA AI backend and game platform",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "node test.js",
+    "start": "node server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}
